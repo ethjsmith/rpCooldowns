@@ -4,6 +4,7 @@
         <div class = "card">
             <h3> Select a Character</h3>
             <form method = "POST" enctype = "multipart/form-data">
+              {% csrf_token %}
                 <select name = "character">
                     {% for char in chars %}
                         <option value = '{{char.id}}'>{{char.name}}</option>
@@ -14,8 +15,10 @@
         <div class = "card">
             <h3> Or create a new character </h3>
             <form method = "POST" enctype = "multipart/form-data">
-                <input type = "text" name = 'uname' placeholder = "create new character(Name)"/>
-                <input type = "text" name = "cname" placeholder = "Class"/>
+                {% csrf_token %}
+                {{ addform.as_p }}
+                <!-- <input type = "text" name = 'uname' placeholder = "create new character(Name)"/>
+                <input type = "text" name = "cname" placeholder = "Class"/>-->
                 <input type = "submit" value = "Submit!"/>
             </form>
         </div>

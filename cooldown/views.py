@@ -9,12 +9,29 @@ from django.urls import reverse_lazy
 
 from cooldown.models import *
 import datetime, threading  # not sure I need these
+from cooldown.decorators import *
+from cooldown.forms import *
 
-def home(request):
-    return "test"
+class SignUpView(generic.CreateView): #TODO rework this
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'registration/signup.html'
+
+
+@login_required
+@character_selected
+def dashboard(request):
+    return render(request,"spellpage.html")
 
 def character(request):
-    return "test"
+    if request.method == "POST":
+        addform = CreateCharacterForm(request.POST)
+        if addform.is_valid():
+            newchar = Character(name = addform.cleaned_data['name'],user=request.user).save() # maybe this works :)
+
+    addform = CreateCharacterForm()
+    selectform = CharacterSelect()
+    return render(request,"chars.html",{"addform":addform,"selectform":selectform})
 
 def use_item(request,item):
     return "test"
