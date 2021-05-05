@@ -2,9 +2,9 @@
     <div class = 'card'>
         Add a new spell ! <br>
         <form method = "POST" enctype = "multipart/form-data">
-            <input type = "text" name = "spellname" placeholder = "enter spell name"/>
-            <input type = "number" name = "level" placeholder ="Enter spell level"/>
-            <input type = "submit" value = "Select!"/>
+            {% csrf_token %}
+            {{add_spell.as_p}}
+            <input type = "submit" name="add_spell" value = "Select!"/>
         </form>
     </div>
 {% endblock %}

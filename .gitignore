@@ -3,3 +3,4 @@ dndenv/
 db.sqlite
 __pycache__/
 *.pyc
+migrations

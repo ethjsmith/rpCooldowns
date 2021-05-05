@@ -1,12 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+# creating the database looks like this
+#`python manage.py makemigrations cooldown`
+#`python manage.py migrate `
+#`python manage.py shell`
 
 class Character(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    def __str__(self):
+        return f"{self.name}"
 
 class Spell(models.Model):
     id = models.AutoField(primary_key=True)

@@ -5,11 +5,12 @@
             <h3> Select a Character</h3>
             <form method = "POST" enctype = "multipart/form-data">
               {% csrf_token %}
-                <select name = "character">
+              {{selectform.as_p}}
+                <!--<select name = "character">
                     {% for char in chars %}
                         <option value = '{{char.id}}'>{{char.name}}</option>
-                    {% endfor %}
-                <input type = "submit" value = "Select!"/>
+                    {% endfor %}-->
+                <input type = "submit" name = "select_character" value = "Select!"/>
             </form>
         </div><br>
         <div class = "card">
@@ -19,7 +20,7 @@
                 {{ addform.as_p }}
                 <!-- <input type = "text" name = 'uname' placeholder = "create new character(Name)"/>
                 <input type = "text" name = "cname" placeholder = "Class"/>-->
-                <input type = "submit" value = "Submit!"/>
+                <input type = "submit" name = "add_character" value = "Submit!"/>
             </form>
         </div>
 {% endblock %}

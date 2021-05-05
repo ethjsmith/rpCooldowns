@@ -21,16 +21,45 @@ class SignUpView(generic.CreateView): #TODO rework this
 @login_required
 @character_selected
 def dashboard(request):
-    return render(request,"spellpage.html")
+    character = Character.objects.filter(name=request.session['character']).first()
+    if request.method == "POST":
+        if request.POST.get("add_spell"):
+            add_spell = AddSpellForm(request.POST)
+            if add_spell.is_valid():
+                Spell(
+                character =character,
+                name=add_spell.cleaned_data['name'],
+                spell_level=add_spell.cleaned_data['level'],
+                current_cooldown = 0
+                ).save()
+        elif request.POST.get("add_item"):
+            add_item = AddItemForm(request.POST)
+            if add_item.is_valid():
+                Item(
+                character=character,
+                name=add_item.cleaned_data['name'],
+                type=add_item.cleaned_data['type'],
+                max_uses=add_item.cleaned_data['uses'],
+                current_uses=add_item.cleaned_data['uses'],
+                ).save()
+    add_spell = AddSpellForm()
+    add_item = AddItemForm()
+    spells = Spell.objects.filter(character=character).all()
+    items = Item.objects.filter(character=character).all()
+    return render(request,"spellpage.html",{"character":character,"spells":spells,"items":items,"add_spell":add_spell,"add_item":add_item})
 
 def character(request):
     if request.method == "POST":
-        addform = CreateCharacterForm(request.POST)
-        if addform.is_valid():
-            newchar = Character(name = addform.cleaned_data['name'],user=request.user).save() # maybe this works :)
-
+        if request.POST.get("add_character"):
+            addform = CreateCharacterForm(request.POST)
+            if addform.is_valid():
+                newchar = Character(name = addform.cleaned_data['name'],user=request.user).save()
+        elif request.POST.get("select_character"):
+            selectform = CharacterSelect(request.POST,user=request.user)
+            if selectform.is_valid():
+                request.session['character']= selectform.cleaned_data['name'].name
     addform = CreateCharacterForm()
-    selectform = CharacterSelect()
+    selectform = CharacterSelect(user=request.user)
     return render(request,"chars.html",{"addform":addform,"selectform":selectform})
 
 def use_item(request,item):

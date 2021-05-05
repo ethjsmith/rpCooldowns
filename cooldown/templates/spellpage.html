@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
-
+{% load filters %}
 {% block content %}
     <div class = "left">
         {% include 'addspell.html' %}<br>
         <div class = "card">
-            <h3> {{g.charname.name}}'s spells </h3>
+            <h3> {{character.name}}'s spells </h3>
             {% for spell in spells %}
-            {% if spell.current == 0 %}<img src="/static/ready.png">{% endif %}
-            {% if spell.current == 1 %}<img src="/static/almostready.png">{% endif %}
-            {% if spell.current >= 2 %}<img src="/static/notready.png">{% endif %}
-                    lvl <b>{{spell.cooldown}}</b> Spell: <i>{{spell.spellname}}</i>
+            {% if spell.current_cooldown == 0 %}<img src="/static/ready.png">{% endif %}
+            {% if spell.current_cooldown == 1 %}<img src="/static/almostready.png">{% endif %}
+            {% if spell.current_cooldown >= 2 %}<img src="/static/notready.png">{% endif %}
+                    lvl <b>{{spell.spell_level}}</b> Spell: <i>{{spell.name}}</i>
 
                     <br>
-                    {% if spell.current == 0 %}
+                    {% if spell.current_cooldown == 0 %}
                         <a href ="/cast/{{spell.id}}"><button class = "rdy">Cast {{spell.spellname}}  </button></a>
                     {% endif %}
-                    {% if spell.current != 0 %}
+                    {% if spell.current_cooldown != 0 %}
                         <button class = "notrdy"><del>Cast {{spell.spellname}}</del> </button>
                     {% endif %}
-                    {% for z in range(spell.cooldown+1) %}
-                        {% if spell.current <= z %} <img src="/static/cd_green.png"> {% endif %}
-                        {% if spell.current > z %} <img src="/static/cd_red.png"> {% endif %}
+                    {% for z in spell_level|times %}
+                        {% if spell.current_cooldown <= z %} <img src="/static/cd_green.png"> {% endif %}
+                        {% if spell.current_cooldown > z %} <img src="/static/cd_red.png"> {% endif %}
                     {% endfor %}
                     <br><br>
             {% endfor %}
@@ -32,33 +32,33 @@
     <div class = "right">
         {% include 'addItem.html' %}<br>
         <div class = "card">
-            <h3> {{g.charname.name}}'s Items and abilities </h3>
+            <h3> {{character.name}}'s Items and abilities </h3>
             {% for item in items %}
-                {% if item.renewable == 1 %}<img src="/static/potion.png">{% endif %}
-                {% if item.renewable == 2 %}<img src="/static/ring.png">{% endif %}
-                {% if item.renewable == 3 %}<img src="/static/scroll.png">{% endif %}
+                {% if item.type == 1 %}<img src="/static/potion.png">{% endif %}
+                {% if item.type == 2 %}<img src="/static/ring.png">{% endif %}
+                {% if item.type == 3 %}<img src="/static/scroll.png">{% endif %}
                 <i>{{item.name}}</i>   Uses:
                 {# THIS WHOLE SECTION IS FOR DISPLAYING THE ITEM COOLDOWN THINGIES #}
-                    {% if item.renewable == 1 %}
-                        {% for cnt in range(item.current) %}<img src="/static/cd_green.png"> {% endfor %}
+                    {% if item.type == 1 %}
+                        {% for cnt in item.current_uses|times %}<img src="/static/cd_green.png"> {% endfor %}
                     {% endif %}
-                    {% if item.renewable == 2 %}
-                        {% for cnt in range(item.uses) %}
-                            {% if cnt < item.current %}<img src="/static/cd_green.png">{% endif %}
-                            {% if cnt >= item.current %}<img src="/static/cd_invalid.png">{% endif %}
+                    {% if item.type == 2 %}
+                        {% for cnt in item.uses|times %}
+                            {% if cnt < item.current_uses %}<img src="/static/cd_green.png">{% endif %}
+                            {% if cnt >= item.current_uses %}<img src="/static/cd_invalid.png">{% endif %}
                         {% endfor %}
                     {% endif %}
-                    {% if item.renewable == 3 %}
-                        {% for cnt2 in range(item.uses) %}
-                            {% if cnt2 < item.current%}<img src="/static/cd_green.png">{% endif %}
-                            {% if cnt2 >= item.current%}<img src="/static/cd_red.png">{% endif %}
+                    {% if item.type == 3 %}
+                        {% for cnt2 in item.uses|times %}
+                            {% if cnt2 < item.current_uses%}<img src="/static/cd_green.png">{% endif %}
+                            {% if cnt2 >= item.current_uses%}<img src="/static/cd_red.png">{% endif %}
                         {% endfor %}
                     {% endif %}
 
-                {% if item.current !=0 %}<a href = "/use/{{item.id}}"><button class = 'rdy'> Use {{item.name}} </button></a>{% endif %}
-                {% if item.current == 0 %}
-                    {% if item.renewable == 2 %}<button class = 'notrdy'><del> Use {{item.name}} </del></button> {{item.name}} has lost it's charge!  find someone who can recharge it for you. {% endif %}
-                    {% if item.renewable == 3 %} <button class = 'notrdy'><del> Use {{item.name}} </del></button> {{item.name}} is all used up for the day. Take a long rest to replenish it! {% endif %}
+                {% if item.current_uses != 0 %}<a href = "/use/{{item.id}}"><button class = 'rdy'> Use {{item.name}} </button></a>{% endif %}
+                {% if item.current_uses == 0 %}
+                    {% if item.type == 2 %}<button class = 'notrdy'><del> Use {{item.name}} </del></button> {{item.name}} has lost it's charge!  find someone who can recharge it for you. {% endif %}
+                    {% if item.type == 3 %} <button class = 'notrdy'><del> Use {{item.name}} </del></button> {{item.name}} is all used up for the day. Take a long rest to replenish it! {% endif %}
                 {% endif %}<br>
             {% endfor %}
         </div><br>
