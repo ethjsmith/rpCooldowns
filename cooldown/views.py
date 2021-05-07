@@ -58,30 +58,62 @@ def character(request):
             selectform = CharacterSelect(request.POST,user=request.user)
             if selectform.is_valid():
                 request.session['character']= selectform.cleaned_data['name'].name
+                return redirect("/")
     addform = CreateCharacterForm()
     selectform = CharacterSelect(user=request.user)
     return render(request,"chars.html",{"addform":addform,"selectform":selectform})
 
 def use_item(request,item):
-    return "test"
+    i = Item.objects.filter(id=item).first()
+    z = i.use()
+    if z == 1:
+        i.delete()
+    else:
+        i.save()
+    return redirect("/")
 
 def recharge_item(request):
-    return "test"
+    if request.method == "POST":
+        rechargeform = RechargeForm(request.POST,character=Character.objects.filter(name=request.session['character']).first())
+        if rechargeform.is_valid():
+            itm = rechargeform.cleaned_data['item']
+            itm.recharge(rechargeform.cleaned_data['number'])
+            itm.save()
+        return redirect("/")
+    rechargeform = RechargeForm(request.POST,character=Character.objects.filter(name=request.session['character']).first())
+    return render(request,"recharge.html",{"rechargeform":rechargeform})
 
-def cast_spell(request,spell):
-    return "test"
+def cast_spell(request,spell): # maybe :)
+    s = Spell.objects.filter(id=spell).first()
+    s.use_spell()
+    s.save()
+    return redirect("/")
 
 def take_turn(request):
-    return "test"
+    character = Character.objects.filter(name=request.session['character']).first()
+    spells = Spell.objects.filter(character=character)
+    for spell in spells:
+        spell.take_turn()
+        spell.save()
+    return redirect("/")
 
 def rest(request):
-    return "test"
+    character = Character.objects.filter(name=request.session['character']).first()
+    spells = Spell.objects.filter(character=character)
+    items = Item.objects.filter(character=character)
+    for spell in spells:
+        spell.reset()
+        spell.save()
+    for item in items:
+        item.rest()
+        item.save()
+    return redirect("/")
 
 def a(request):
-    return "test"
+    return "admin view"
 
 def admin(request):
-    return "test"
+    return "more admin view"
 
 def delete(request,type,id):
-    return "test"
+    return "admin related view "

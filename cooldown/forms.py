@@ -19,4 +19,13 @@ class AddSpellForm(forms.Form):
 class AddItemForm(forms.Form):
     name = forms.CharField(label="Enter item or ability name")
     uses = forms.IntegerField(label="Enter number of uses")
-    type = forms.ChoiceField(choices = [(0,"One time user item ( like a potion)"),(1,"rechargable magic item"),(2,"Daily ability or power")])
+    type = forms.ChoiceField(choices = [(0,"One time user item ( like a potion)"),(2,"rechargable magic item"),(1,"Daily ability or power")])
+
+class RechargeForm(forms.Form):
+    def __init__(self,*args,**kwargs):
+        self.character = kwargs.pop('character')
+        super(RechargeForm,self).__init__(*args,**kwargs)
+        self.fields['item'].queryset = Item.objects.filter(character=self.character).filter(type=2).all()
+
+    item = forms.ModelChoiceField(queryset=None)
+    number = forms.IntegerField(label="Enter number of charges to add")
