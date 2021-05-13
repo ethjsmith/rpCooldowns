@@ -109,11 +109,17 @@ def rest(request):
         item.save()
     return redirect("/")
 
-def a(request):
-    return "admin view"
+def a(request): # selecting like this is simpler, but less usable, might be better to do some complex data structure
+    u = User.objects.all()
+    c = Character.objects.all()
+    s = Spell.objects.all()
+    i = Item.objects.all()
+    return render(request,"admin.html",{"users":u,"characters":c,"spells":s,"items":i})
 
-def admin(request):
+def admin(request):# I Don't know what this is supposed to do
     return "more admin view"
 
 def delete(request,type,id):
-    return "admin related view "
+    if type == "": # like this, really?
+        print("select")
+    return redirect("/a")
