@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% block content %}
+{% for user in alldata %}
+  <div class = "card">
+  {% for t in user%}
+    {% if t|iter %}
+      {% for z in t %}
+        {{z}}<br>
+      {% endfor %}
+    {% else %}
+      {{t}}<br>(Not iterable)
+    {% endif %}
+  {% endfor %}</div><br><br>
+{% endfor %}
+{% endblock %}

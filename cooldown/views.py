@@ -8,7 +8,7 @@ from django.views import generic
 from django.urls import reverse_lazy
 
 from cooldown.models import *
-import datetime, threading  # not sure I need these
+import datetime, threading,json  # not sure I need these
 from cooldown.decorators import *
 from cooldown.forms import *
 
@@ -110,11 +110,25 @@ def rest(request):
     return redirect("/")
 
 def a(request): # selecting like this is simpler, but less usable, might be better to do some complex data structure
+    table = []
+    tmp = []
     u = User.objects.all()
-    c = Character.objects.all()
-    s = Spell.objects.all()
-    i = Item.objects.all()
-    return render(request,"admin.html",{"users":u,"characters":c,"spells":s,"items":i})
+    for user in u:
+        c = Character.objects.filter(user=user)
+        for char in c:
+            s = Spell.objects.filter(character=char)
+            i = Item.objects.filter(character=char)
+            tmp.append(char)
+            tmp.append(s)
+            tmp.append(i)
+        tmp.insert(0,user)
+        table.append(tmp)
+        tmp = []
+    #return render(request,"admin.html",{"users":u,"characters":c,"spells":s,"items":i})
+    print(table)
+    # js = json.dumps(table)
+    # print(js)
+    return render(request,"admin.html",{"alldata":table})
 
 def admin(request):# I Don't know what this is supposed to do
     return "more admin view"

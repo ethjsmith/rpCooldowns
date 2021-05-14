@@ -30,7 +30,8 @@ class Spell(models.Model):
             self.current_cooldown -= 1
     def use_spell(self):
         self.current_cooldown = self.spell_level +1 # plus 1 for the first turn when you cast the spell
-
+    def __str__(self):
+        return f"{self.name}"
 
 class Item(models.Model):
     id = models.AutoField(primary_key=True)
